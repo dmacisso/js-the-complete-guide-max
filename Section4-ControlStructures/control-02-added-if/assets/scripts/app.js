@@ -2,21 +2,15 @@ const defaultResult = 0;
 let currentResult = defaultResult;
 let logEntries = [];
 
-// This is comment; not executed as code
-
-/* A block comment
-    more on the block
-*/
-
-// Gets input from input field on a form
+// Gets input from input field
 function getUserNumberInput() {
   return parseInt(usrInput.value);
 }
 
-// Generates a description to display with calculated results
+// Generates and writes calculation log
 function createAndWriteOutput(operator, resultBeforeCalc, calcNumber) {
-  const calcDescription = `${resultBeforeCalc} ${operator} ${calcNumber}`; // all text
-  outputResult(currentResult, calcDescription); // defined in vender.js
+  const calcDescription = `${resultBeforeCalc} ${operator} ${calcNumber}`;
+  outputResult(currentResult, calcDescription); // from vendor file
 }
 
 function writeToLog(
@@ -32,8 +26,7 @@ function writeToLog(
     result: newResult
   };
   logEntries.push(logEntry);
-  //   console.log(logEntry.operation);
-  //   console.log(logEntries);
+  console.log(logEntries);
 }
 
 function calculateResult(calculationType) {
@@ -49,29 +42,30 @@ function calculateResult(calculationType) {
   }
 
   // if (
-  //   calculationType === 'Add' ||
+  //   calculationType === 'ADD' ||
   //   calculationType === 'SUBTRACT' ||
   //   calculationType === 'MULTIPLY' ||
   //   calculationType === 'DIVIDE'
   // ) {
-    const initialResult = currentResult;
-    let mathOperator;
-    if (calculationType === 'ADD') {
-      currentResult += enteredNumber;
-      mathOperator = '+';
-    } else if (calculationType === 'SUBTRACT') {
-      currentResult -= enteredNumber;
-      mathOperator = '-';
-    } else if (calculationType === 'MULTIPLY') {
-      currentResult *= enteredNumber;
-      mathOperator = '*';
-    } else if (calculationType === 'DIVIDE') {
-      currentResult /= enteredNumber;
-      mathOperator = '/';
-    }
+  
+  const initialResult = currentResult;
+  let mathOperator;
+  if (calculationType === 'ADD') {
+    currentResult += enteredNumber;
+    mathOperator = '+';
+  } else if (calculationType === 'SUBTRACT') {
+    currentResult -= enteredNumber;
+    mathOperator = '-';
+  } else if (calculationType === 'MULTIPLY') {
+    currentResult *= enteredNumber;
+    mathOperator = '*';
+  } else if (calculationType === 'DIVIDE') {
+    currentResult /= enteredNumber;
+    mathOperator = '/';
+  }
 
-    createAndWriteOutput(mathOperator, initialResult, enteredNumber);
-    writeToLog(calculationType, initialResult, enteredNumber, currentResult);
+  createAndWriteOutput(mathOperator, initialResult, enteredNumber);
+  writeToLog(calculationType, initialResult, enteredNumber, currentResult);
   // }
 }
 
@@ -86,6 +80,7 @@ function subtract() {
 function multiply() {
   calculateResult('MULTIPLY');
 }
+
 function divide() {
   calculateResult('DIVIDE');
 }
