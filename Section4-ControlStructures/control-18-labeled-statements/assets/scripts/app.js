@@ -11,37 +11,19 @@ const LOG_EVENT_MONSTER_ATTACK = 'MONSTER_ATTACK';
 const LOG_EVENT_PLAYER_HEAL = 'PLAYER_HEAL';
 const LOG_EVENT_GAME_OVER = 'GAME_OVER';
 
+const enteredValue = prompt('Maximum life for you and the monster.', '100');
+
+let chosenMaxLife = parseInt(enteredValue);
 let battleLog = [];
 let lastLoggedEntry;
 
-function getMaxLifeValues() {
-  const enteredValue = prompt('Maximum life for Monster and Player', '100');
-  const parsedValue = parseInt(enteredValue);
-
-  if (isNaN(parsedValue) || parsedValue <= 0) {
-    throw { message: 'Invalid user input, not a number!' };
-  }
-  return parsedValue;
-}
-
-let chosenMaxLife;
-
-try {
-  chosenMaxLife = getMaxLifeValues();
-} catch (error) {
-  console.log(error);
+if (isNaN(chosenMaxLife) || chosenMaxLife <= 0) {
   chosenMaxLife = 100;
-  alert('You entered something wrong using default value 100');
-  throw error;
-} //finally {
-// clean up..
-// }
-
-alert(`Max Life is ${chosenMaxLife}`);
+}
 
 let currentMonsterHealth = chosenMaxLife;
 let currentPlayerHealth = chosenMaxLife;
-let hasBonusLive = true;
+let hasBonusLife = true;
 
 adjustHealthBars(chosenMaxLife);
 
@@ -148,27 +130,27 @@ function endRound() {
     currentPlayerHealth
   );
 
-  if (currentPlayerHealth <= 0 && hasBonusLive) {
-    hasBonusLive = false;
+  if (currentPlayerHealth <= 0 && hasBonusLife) {
+    hasBonusLife = false;
     removeBonusLife();
     currentPlayerHealth = initialPlayerHealth;
-    alert("You're not dead yet. Saved by the bonus life.");
     setPlayerHealth(initialPlayerHealth);
+    alert('You would be dead but the bonus life saved you!');
   }
 
   if (currentMonsterHealth <= 0 && currentPlayerHealth > 0) {
-    alert('You Won!!');
+    alert('You won!');
     writeToLog(
       LOG_EVENT_GAME_OVER,
-      'PLAYER_WON',
+      'PLAYER WON',
       currentMonsterHealth,
       currentPlayerHealth
     );
   } else if (currentPlayerHealth <= 0 && currentMonsterHealth > 0) {
-    alert('You Lost!!');
+    alert('You lost!');
     writeToLog(
       LOG_EVENT_GAME_OVER,
-      'MONSTER_WON',
+      'MONSTER WON',
       currentMonsterHealth,
       currentPlayerHealth
     );
@@ -176,11 +158,12 @@ function endRound() {
     alert('You have a draw!');
     writeToLog(
       LOG_EVENT_GAME_OVER,
-      'PLAYER/MONSTER_DRAW',
+      'A DRAW',
       currentMonsterHealth,
       currentPlayerHealth
     );
   }
+
   if (currentMonsterHealth <= 0 || currentPlayerHealth <= 0) {
     reset();
   }
@@ -189,13 +172,13 @@ function endRound() {
 function attackMonster(mode) {
   const maxDamage = mode === MODE_ATTACK ? ATTACK_VALUE : STRONG_ATTACK_VALUE;
   const logEvent =
-    mode === MODE_STRONG_ATTACK
+    mode === MODE_ATTACK
       ? LOG_EVENT_PLAYER_ATTACK
       : LOG_EVENT_PLAYER_STRONG_ATTACK;
   // if (mode === MODE_ATTACK) {
   //   maxDamage = ATTACK_VALUE;
   //   logEvent = LOG_EVENT_PLAYER_ATTACK;
-  // } else {
+  // } else if (mode === MODE_STRONG_ATTACK) {
   //   maxDamage = STRONG_ATTACK_VALUE;
   //   logEvent = LOG_EVENT_PLAYER_STRONG_ATTACK;
   // }
@@ -216,7 +199,7 @@ function strongAttackHandler() {
 function healPlayerHandler() {
   let healValue;
   if (currentPlayerHealth >= chosenMaxLife - HEAL_VALUE) {
-    alert("You can't heal to more than your max initial health");
+    alert("You can't heal to more than your max initial health.");
     healValue = chosenMaxLife - currentPlayerHealth;
   } else {
     healValue = HEAL_VALUE;
@@ -233,23 +216,34 @@ function healPlayerHandler() {
 }
 
 function printLogHandler() {
-  let j = 0;
-  // while (j < 3) {
-  //   console.log(`-------${j}`);
-  //   j++;
-  // }
   for (let i = 0; i < 3; i++) {
-    console.log(`----${i}`);
+    console.log('------------');
   }
-  // for(let i = 0; i < battleLog.length; i++) {
-  //   console.log(battleLog[i])
+  let j = 0;
+  outerWhile: do {
+    console.log('Outer', j);
+    innerFor: for (let k = 0; k < 5; k++) {
+      if (k === 3) {
+        // break outerWhile;
+        continue outerWhile; // dangerous! => Infinite loop!
+      }
+      console.log('Inner', k);
+    }
+    j++;
+  } while (j < 3);
+  // for (let i = 10; i > 0;) {
+  //   i--;
+  //   console.log(i);
+  // }
+  // for (let i = 0; i < battleLog.length; i++) {
+  //   console.log(battleLog[i]);
   // }
   let i = 0;
   for (const logEntry of battleLog) {
     if ((!lastLoggedEntry && lastLoggedEntry !== 0) || lastLoggedEntry < i) {
       console.log(`#${i}`);
       for (const key in logEntry) {
-        console.log(`${key} => ${logEntry[key]}`); // the value of the key constant
+        console.log(`${key} => ${logEntry[key]}`);
       }
       lastLoggedEntry = i;
       break;
