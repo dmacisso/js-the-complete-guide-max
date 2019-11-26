@@ -3,17 +3,20 @@ const startGameBtn = document.getElementById('start-game-btn');
 const ROCK = 'ROCK';
 const PAPER = 'PAPER';
 const SCISSORS = 'SCISSORS';
+const DEFAULT_USER_CHOICE = ROCK;
 const RESULT_DRAW = 'DRAW';
-const RESULT_PLAYER_WINS = 'Player Wins';
-const RESULT_COMPUTER_WINS = 'Computer Wins';
-const DEFAULT_USER_CHOICE = 'ROCK';
+const RESULT_PLAYER_WINS = 'PLAYER_WINS';
+const RESULT_COMPUTER_WINS = 'COMPUTER_WINS';
 
 let gameIsRunning = false;
 
 const getPlayerChoice = () => {
-  const selection = prompt(`${ROCK} ${PAPER} or ${SCISSORS}`, '').toUpperCase();
-  if (selection != ROCK && selection != PAPER && selection != SCISSORS) {
-    alert(`Invalid Choice! We chose ${DEFAULT_USER_CHOICE} for you`);
+  const selection = prompt(
+    `${ROCK}, ${PAPER} or ${SCISSORS}?`,
+    ''
+  ).toUpperCase();
+  if (selection !== ROCK && selection !== PAPER && selection !== SCISSORS) {
+    alert(`Invalid choice! We chose ${DEFAULT_USER_CHOICE} for you!`);
     return;
   }
   return selection;
@@ -56,7 +59,7 @@ startGameBtn.addEventListener('click', () => {
     return;
   }
   gameIsRunning = true;
-  console.log('Game is starting');
+  console.log('Game is starting...');
   const playerChoice = getPlayerChoice();
   const computerChoice = getComputerChoice();
   let winner;
@@ -65,41 +68,28 @@ startGameBtn.addEventListener('click', () => {
   } else {
     winner = getWinner(computerChoice);
   }
-  let message = `Player selected ${playerChoice ||
-    DEFAULT_USER_CHOICE}, and the computer selected ${computerChoice}; therefore the`;
+  let message = `You picked ${playerChoice ||
+    DEFAULT_USER_CHOICE}, computer picked ${computerChoice}, therefore you `;
   if (winner === RESULT_DRAW) {
-    message = `${message} game is a ${RESULT_DRAW}`;
+    message = message + 'had a draw.';
   } else if (winner === RESULT_PLAYER_WINS) {
-    message = `${message} ${RESULT_PLAYER_WINS}`;
+    message = message + 'won.';
   } else {
-    message = `${message} ${RESULT_COMPUTER_WINS}`;
+    message = message + 'lost.';
   }
   alert(message);
   gameIsRunning = false;
 });
 
 // not related to game
-const sumUp = (...numbers) => {
-  const validateNumber = number => {
-    return isNaN(number) ? 0 : number;
-  };
+
+const sumUp = (a, b, ...numbers) => {
   let sum = 0;
   for (const num of numbers) {
-    sum += validateNumber(num);
+    sum += num;
   }
   return sum;
 };
 
-const subtractDown = function() {
-  let sum = 0;
-  for (const num of arguments) {
-    //don't use the arguments keyword use the rest ... like above
-    sum -= num;
-  }
-  return sum;
-};
-
-console.log(sumUp(1, 5, -3, 'albert', 10, 25, 28));
-console.log(sumUp(1, 5, -3, 6, 10, 25, 28, 88, 92));
-
-console.log(subtractDown(1, 10, 15, 20));
+console.log(sumUp(1, 5, 10, -3, 6, 10));
+console.log(sumUp(1, 5, 10, -3, 6, 10, 25, 88));
