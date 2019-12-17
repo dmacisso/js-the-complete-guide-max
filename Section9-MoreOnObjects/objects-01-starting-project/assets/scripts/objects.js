@@ -23,12 +23,18 @@ const renderMovies = (filter = '') => {
 
   filteredMovies.forEach(movie => {
     const movieEl = document.createElement('li');
-    let text = movie.info.title + ' - ';
-    for (const key in movie.info) {
-      if (key !== 'title') {
-        text = text + `${key}: ${movie.info[key]}`;
+    const { info, ...otherProps } = movie;
+    // const { title: movieTitle } = info
+    let { getFormatedTitle } = movie;
+    // getFormatedTitle = getFormatedTitle.bind(movie, , ,) // - bind for future execution
+    // let text = getFormatedTitle.call(movie, , ,) + ' - ';  // - call executes right away + additional args
+    let text = getFormatedTitle.apply(movie, []) + ' - '; // -  executes right away but only one additional argument; an array
+    for (const key in info) {
+      if (key !== 'title' && key !== '_title') {
+        text = text + `${key}: ${info[key]}`;
       }
     }
+    console.log(otherProps);
     movieEl.textContent = text;
     movieList.append(movieEl);
   });
@@ -39,21 +45,34 @@ const addMovieHandler = () => {
   const extraName = document.getElementById('extra-name').value;
   const extraValue = document.getElementById('extra-value').value;
 
-  if (
-    title.trim() === '' ||
-    extraName.trim() === '' ||
-    extraValue.trim() === ''
-  ) {
+  if (extraName.trim() === '' || extraValue.trim() === '') {
     return;
   }
 
   const newMovie = {
     info: {
-      title,
+      set title(val) {
+        // makes it writable
+        if (val.trim() === '') {
+          this._title = 'DEFAULT';
+          return;
+        }
+        this._title = val;
+      },
+      get title() {
+        // makes it readable
+        return this._title;
+      },
       [extraName]: extraValue
     },
-    id: Math.random()
+    id: Math.random().toString(),
+    getFormatedTitle() {
+      return this.info.title.toUpperCase(); //this refers to newMovie
+    }
   };
+
+  newMovie.info.title = title; //triggers the setter
+  console.log(newMovie.info.title); // access the getter.
 
   movies.push(newMovie);
   renderMovies();
